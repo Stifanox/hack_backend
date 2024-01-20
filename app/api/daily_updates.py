@@ -26,7 +26,7 @@ def get_daily_updates(user_id):
 
 @bp.route("/daily-updates/user", methods=["GET"])
 def get_random_uncheered():
-    uncheered_updates = DailyUpdate.query.filter_by(is_cheered=False).all()
+    uncheered_updates = DailyUpdate.query.filter_by(is_cheered=False).filter(DailyUpdate.rating < 3).all()
     if not uncheered_updates:
         return {"message": "No uncheered updates available"}, 404
     if not uncheered_updates:
