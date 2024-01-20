@@ -76,7 +76,7 @@ def get_random_uncheered(userId):
 
         id = ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("id")
         if DailyUpdate.query.filter_by(id=id).first().user_id == userId:
-            return random_update
+            return jsonify(random_update.toDict())
 
         return jsonify(DailyUpdate.query.filter_by(id=id).first().toDict())
     except:
