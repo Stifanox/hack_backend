@@ -29,13 +29,13 @@ class SuccessRegister:
 @dataclasses.dataclass
 class ErrorHabit:
     data: str
-    habitCreated: bool = False
+    habitSuccess: bool = False
 
 
 @dataclasses.dataclass
 class SuccessHabit:
-    data: str
-    habitCreated: bool = True
+    data: Any
+    habitSuccess: bool = True
 
 
 def success(data):

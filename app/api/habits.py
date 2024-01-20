@@ -18,7 +18,7 @@ def createNewHabit():
     db.session.add(newHabit)
     db.session.commit()
 
-    return SuccessHabit("Habit was added successfully").__dict__,200
+    return SuccessHabit("Habit was added successfully").__dict__, 200
 
 
 @bp.route("/habits", methods=["PUT"])
@@ -38,6 +38,16 @@ def updateHabit():
     db.session.commit()
     return SuccessHabit("Habit was successfully updated").__dict__, 200
 
-@bp.route("/habits/<int:id>", methods=["GET"])
-def getUserHabits():
-    pass
+
+@bp.route("/habits/<int:user_id>", methods=["GET"])
+def getUserHabits(user_id):
+    userHabits = Habits.query.filter_by(user_id=user_id).all()
+
+    return SuccessHabit([user.toDict() for user in userHabits]).__dict__
+
+
+@bp.route("/habits", methods=["GET"])
+@bp.route("/habits/", methods=["GET"])
+def getUserHabitsError():
+    return ErrorHabit("User id was not passed to url (/habits/<user_id>").__dict__, 404
+
