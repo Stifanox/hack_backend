@@ -9,7 +9,8 @@ class User(db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password = db.Column(db.String(120))
-    general_streak = db.Column(db.Integer, default = 0)
+    general_streak = db.Column(db.Integer, default=0)
+
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -19,7 +20,7 @@ class User(db.Model):
             "password": self.password,
             "email": self.email,
             "id": self.id,
-            "generalStreak":self.general_streak
+            "generalStreak": self.general_streak
         }
 
     def fromDict(self, data, new_user=False):
@@ -40,6 +41,12 @@ class DailyUpdate(db.Model):
 
     def __repr__(self):
         return f'<DailyUpdate {self.id}>'
+
+    def toGPTDict(self):
+        return {
+            "id": self.id,
+            "note": self.note
+        }
 
     def toDict(self):
         return {

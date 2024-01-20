@@ -17,7 +17,7 @@ def create_cheerup():
     GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
                               headers={"Authorization": "Bearer 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",
                                        "Content-Type": "application/json"},
-                              data=GPTMessage(data["content"]).getMessage()
+                              data=GPTMessage(data["content"]).getCheerMessage()
                               )
     print(GPTAnswer.json())
     print(GPTAnswer.json()["choices"][0]["message"]["content"])
