@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy import BOOLEAN
 from app import db
+import time
 
 
 class User(db.Model):
@@ -34,7 +35,7 @@ class DailyUpdate(db.Model):
     rating = db.Column(db.Integer)
     note = db.Column(db.Text)
     is_cheered = db.Column(db.Boolean, default=False)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp_new = db.Column(db.BigInteger, index=True, default=round(time.time()*1000))
 
     def __repr__(self):
         return f'<DailyUpdate {self.id}>'
@@ -46,7 +47,7 @@ class DailyUpdate(db.Model):
             "rating": self.rating,
             "note": self.note,
             "isCheered": self.is_cheered,
-            "timestamp": self.timestamp.isoformat()
+            "timestamp": self.timestamp_new
         }
 
     def fromDict(self, data):
@@ -66,7 +67,7 @@ class Cheerup(db.Model):
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     content = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp_new = db.Column(db.BigInteger, index=True, default=round(time.time()*1000))
 
     def __repr__(self):
         return f'<Cheerup {self.id}>'
@@ -78,7 +79,7 @@ class Cheerup(db.Model):
             "receiverId": self.receiver_id,
             "senderId": self.sender_id,
             "content": self.content,
-            "timestamp": self.timestamp.isoformat()
+            "timestamp": self.timestamp_new
         }
 
     def fromDict(self, data):
@@ -96,8 +97,8 @@ class Habits(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     habit_id = db.Column(db.Integer)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
-    timestamp_broken = db.Column(db.DateTime)
+    timestamp_new = db.Column(db.BigInteger, default=round(time.time()*1000))
+    timestamp_broken_new = db.Column(db.BigInteger)
     broken = db.Column(BOOLEAN, default=False)
 
     def toDict(self):
@@ -105,7 +106,7 @@ class Habits(db.Model):
             "id": self.id,
             "userId": self.user_id,
             "habitId": self.habit_id,
-            "timestamp": self.timestamp,
+            "timestamp": self.timestamp_new,
             "broken": self.broken,
-            "timestampBroken": self.timestamp_broken
+            "timestampBroken": self.timestamp_broken_new
         }

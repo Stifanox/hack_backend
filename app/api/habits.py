@@ -3,7 +3,7 @@ from app.models import Habits
 from flask import request
 from app.common.response import SuccessHabit, ErrorHabit
 from app import db
-from datetime import datetime
+import time
 
 @bp.route("/habits", methods=["POST"])
 def createNewHabit():
@@ -35,7 +35,7 @@ def updateHabit():
         return ErrorHabit("Habit was not found").__dict__, 404
 
     if request.json["broken"]:
-        habit.timestamp_broken = datetime.utcnow()
+        habit.timestamp_broken_new = round(time.time()*1000)
 
     habit.broken = request.json["broken"]
     db.session.commit()
@@ -53,4 +53,3 @@ def getUserHabits(user_id):
 @bp.route("/habits/", methods=["GET"])
 def getUserHabitsError():
     return ErrorHabit("User id was not passed to url (/habits/<user_id>").__dict__, 422
-
