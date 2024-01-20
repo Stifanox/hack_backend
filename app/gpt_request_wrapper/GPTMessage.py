@@ -23,3 +23,12 @@ class GPTMessage:
                 "content": f"Podaje ci wiadomości wysłane cześniej przez użytkownika: '{self.messageToCheck}'. To wiadomości na które użytkownik może odpowiedzieć: '{uncheered_updates}'. Jako odpowiedź zwróć JSONa z numerem wiadomości jako id, na którą użytkownik może odpowiedzieć. Jako id weż wartość z podanego jsona."
             }]
         })
+
+    def getMessageForDailyUpdated(self):
+        return json.dumps({
+            "model": "gpt-3.5-turbo",
+            "messages": [{
+                "role": "system",
+                "content": f"Oceń czy ta wiadomość świadczy o bardzo złym samopoczuciu: '{self.messageToCheck}'. W odpowiedzi odeślij JSONa z kluczem isSuspicious którego wartość przyjmuje 1 jeżeli wiadomość wydaje się świadczyć o bardzo złym samopoczuciu lub 0 jeżeli wiadomość nie wydaje się świadczyć o bardzo złym samopoczuciu."
+            }]
+        })

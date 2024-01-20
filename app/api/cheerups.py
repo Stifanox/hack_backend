@@ -19,8 +19,6 @@ def create_cheerup():
                                        "Content-Type": "application/json"},
                               data=GPTMessage(data["content"]).getCheerMessage()
                               )
-    print(GPTAnswer.json())
-    print(GPTAnswer.json()["choices"][0]["message"]["content"])
 
     if ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("value") == 1:
         new_bad_message = BadMessage(user_id=data["senderId"], message=data["content"])

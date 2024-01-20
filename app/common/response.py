@@ -38,6 +38,18 @@ class SuccessHabit:
     habitSuccess: bool = True
 
 
+@dataclasses.dataclass
+class SuccessUserStreak:
+    data: Any
+    userStreak: bool = True
+
+
+@dataclasses.dataclass
+class ErrorUserStreak:
+    data: Any
+    userStreak: bool = False
+
+
 def success(data):
     return {
         "success": True,
