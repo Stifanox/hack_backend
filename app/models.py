@@ -42,17 +42,22 @@ class DailyUpdate(db.Model):
     def toDict(self):
         return {
             "id": self.id,
-            "user_id": self.user_id,
+            "userId": self.user_id,
             "rating": self.rating,
             "note": self.note,
-            "is_cheered": self.is_cheered,
+            "isCheered": self.is_cheered,
             "timestamp": self.timestamp.isoformat()
         }
 
     def fromDict(self, data):
-        for field in ['user_id', 'rating', 'note', 'is_cheered']:
-            if field in data:
-                setattr(self, field, data[field])
+        if 'userId' in data:
+            self.user_id = data['userId']
+        if 'rating' in data:
+            self.rating = data['rating']
+        if 'note' in data:
+            self.note = data['note']
+        if 'isCheered' in data:
+            self.is_cheered = data['isCheered']
 
 
 class Cheerup(db.Model):
