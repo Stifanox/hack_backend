@@ -24,10 +24,10 @@ def createNewHabit():
 @bp.route("/habits", methods=["PUT"])
 def updateHabit():
     if request.content_type != "application/json":
-        return ErrorHabit("Content type is not application/json").__dict__, 404
+        return ErrorHabit("Content type is not application/json").__dict__, 422
 
     if "id" not in request.json or "broken" not in request.json:
-        return ErrorHabit("Not all required params was passed (id, broken)").__dict__, 404
+        return ErrorHabit("Not all required params was passed (id, broken)").__dict__, 422
 
     habit = Habits.query.filter_by(id=request.json["id"]).first()
 
@@ -52,5 +52,5 @@ def getUserHabits(user_id):
 @bp.route("/habits", methods=["GET"])
 @bp.route("/habits/", methods=["GET"])
 def getUserHabitsError():
-    return ErrorHabit("User id was not passed to url (/habits/<user_id>").__dict__, 404
+    return ErrorHabit("User id was not passed to url (/habits/<user_id>").__dict__, 422
 
