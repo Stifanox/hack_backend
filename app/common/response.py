@@ -13,15 +13,30 @@ class ErrorLogin:
     data: str
     loggedIn: str = False
 
+
 @dataclasses.dataclass
 class ErrorRegister:
     data: str
     registered: str = False
 
+
 @dataclasses.dataclass
 class SuccessRegister:
     data: str
     registered: str = True
+
+
+@dataclasses.dataclass
+class ErrorHabit:
+    data: str
+    habitCreated: bool = False
+
+
+@dataclasses.dataclass
+class SuccessHabit:
+    data: str
+    habitCreated: bool = True
+
 
 def success(data):
     return {

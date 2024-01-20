@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from sqlalchemy import BOOLEAN
 from app import db
 
 
@@ -90,3 +90,11 @@ class Cheerup(db.Model):
             self.sender_id = data['senderId']
         if 'content' in data:
             self.content = data['content']
+
+
+class Habits(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    habit_id = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+    broken = db.Column(BOOLEAN,default = False)
