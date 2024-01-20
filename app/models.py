@@ -101,6 +101,7 @@ class Habits(db.Model):
     timestamp_new = db.Column(db.BigInteger, default=round(time.time() * 1000))
     timestamp_broken_new = db.Column(db.BigInteger)
     broken = db.Column(BOOLEAN, default=False)
+    updated_at = db.Column(db.BigInteger)
 
     def toDict(self):
         return {
@@ -109,8 +110,12 @@ class Habits(db.Model):
             "habitId": self.habit_id,
             "timestamp": self.timestamp_new,
             "broken": self.broken,
-            "timestampBroken": self.timestamp_broken_new
+            "timestampBroken": self.timestamp_broken_new,
+            "updatedAt": self.updated_at
         }
+
+    def updateTimestamp(self):
+        self.updated_at = round(time.time() * 1000)
 
 
 class BadMessage(db.Model):
