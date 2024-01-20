@@ -12,23 +12,24 @@ from app.common.response import success, failed
 @bp.route("/cheerups", methods=["POST"])
 def create_cheerup():
     data = request.json
-
-    print(data["content"])
     GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
                               headers={"Authorization": "Bearer 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",
                                        "Content-Type": "application/json"},
                               data=GPTMessage(data["content"]).getCheerMessage()
                               )
 
-    if ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("value") == 1:
-        new_bad_message = BadMessage(user_id=data["senderId"], message=data["content"])
-        db.session.add(new_bad_message)
-        db.session.commit()
-        if BadMessage.query.filter_by(user_id=data['senderId']).count() >= 3:
-            User.query.filter_by(id=data['senderId']).first().banned = 1
+    try:
+        if ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("value") == 1:
+            new_bad_message = BadMessage(user_id=data["senderId"], message=data["content"])
+            db.session.add(new_bad_message)
             db.session.commit()
-            return failed(f"Nie można wysłać wiadomości o treści: {data['content']}. Wysyłanie cheersów zostaje zablokowane."), 418
-        return failed(f"Nie można wysłać wiadomości o treści: {data['content']}"), 418
+            if BadMessage.query.filter_by(user_id=data['senderId']).count() >= 3:
+                User.query.filter_by(id=data['senderId']).first().banned = 1
+                db.session.commit()
+                return failed(f"Nie można wysłać wiadomości o treści: {data['content']}. Wysyłanie cheersów zostaje zablokowane."), 418
+            return failed(f"Nie można wysłać wiadomości o treści: {data['content']}"), 418
+    except:
+        pass
 
     daily_update = DailyUpdate.query.get(data.get("updateId"))
     if daily_update.is_cheered:
@@ -40,7 +41,6 @@ def create_cheerup():
     daily_update = DailyUpdate.query.get(new_cheerup.update_id)
     daily_update.is_cheered = True
 
-    print(data["senderId"])
     userWhoCheered = User.query.filter_by(id=int(data["senderId"])).first()
     userWhoCheered.general_streak = userWhoCheered.general_streak + 1
 

@@ -12,6 +12,7 @@ import requests
 from app.gpt_request_wrapper.GPTMessage import GPTMessage
 import ast
 
+
 @bp.route("/daily-updates", methods=["POST"])
 def create_daily_update():
     data = request.json
@@ -21,12 +22,16 @@ def create_daily_update():
     new_update = DailyUpdate()
 
     GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
-                             headers={"Authorization": "Bearer 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",
-                                      "Content-Type": "application/json"},
-                             data=GPTMessage(data["note"]).getMessageForDailyUpdated()
-                             )
+                              headers={"Authorization": "Bearer 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",
+                                       "Content-Type": "application/json"},
+                              data=GPTMessage(data["note"]).getMessageForDailyUpdated()
+                              )
 
-    isSus = ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("isSuspicious")
+    isSus = 0
+    try:
+        isSus = ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("isSuspicious")
+    except:
+        pass
 
     if isSus == 1:
         new_update.suspicious_message = True
@@ -68,8 +73,6 @@ def get_random_uncheered(userId):
                                           [f"{uncheered_update.id}. {uncheered_update.note}" for uncheered_update in
                                            uncheered_updates]))
                                   )
-
-        print(ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("id"))
 
         id = ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("id")
         return jsonify(DailyUpdate.query.filter_by(id=id).first().toDict())
