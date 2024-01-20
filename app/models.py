@@ -74,14 +74,19 @@ class Cheerup(db.Model):
     def toDict(self):
         return {
             "id": self.id,
-            "update_id": self.update_id,
-            "receiver_id": self.receiver_id,
-            "sender_id": self.sender_id,
+            "updateId": self.update_id,
+            "receiverId": self.receiver_id,
+            "senderId": self.sender_id,
             "content": self.content,
-            "timestamp": self.timestamp.isoformat() if self.timestamp else None
+            "timestamp": self.timestamp.isoformat()
         }
 
     def fromDict(self, data):
-        for field in ['update_id', 'receiver_id', 'sender_id', 'content']:
-            if field in data:
-                setattr(self, field, data[field])
+        if 'updateId' in data:
+            self.update_id = data['updateId']
+        if 'receiverId' in data:
+            self.receiver_id = data['receiverId']
+        if 'senderId' in data:
+            self.sender_id = data['senderId']
+        if 'content' in data:
+            self.content = data['content']
