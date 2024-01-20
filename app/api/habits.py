@@ -5,6 +5,7 @@ from app.common.response import SuccessHabit, ErrorHabit
 from app import db
 import time
 
+
 @bp.route("/habits", methods=["POST"])
 def createNewHabit():
     if request.content_type != "application/json":
@@ -35,7 +36,7 @@ def updateHabit():
         return ErrorHabit("Habit was not found").__dict__, 404
 
     if request.json["broken"]:
-        habit.timestamp_broken_new = round(time.time()*1000)
+        habit.timestamp_broken_new = round(time.time() * 1000)
 
     habit.updateTimestamp()
     habit.broken = request.json["broken"]
@@ -45,7 +46,7 @@ def updateHabit():
 
 @bp.route("/habits/<int:user_id>", methods=["GET"])
 def getUserHabits(user_id):
-    userHabits = Habits.query.filter_by(user_id=user_id).all()
+    userHabits = Habits.query.filter_by(user_id=user_id).filter(Habits.broken == False).all()
 
     return SuccessHabit([user.toDict() for user in userHabits]).__dict__
 
