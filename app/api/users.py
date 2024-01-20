@@ -1,5 +1,3 @@
-import json
-
 from app.api import bp
 from app.models import User
 from flask import jsonify
@@ -15,8 +13,7 @@ def getUser(id):
 
 @bp.route("/login", methods=["POST"])
 def loginUser():
-    fields = ["user", "password"]
-    if not all(name in fields for name in request.form):
+    if "user" not in request.form or "password" not in request.form:
         return ErrorLogin("There are no required fields ('user', 'password')").__dict__
 
     user = User.query.filter_by(username=request.form["user"]).first()
@@ -32,8 +29,7 @@ def loginUser():
 
 @bp.route("/register", methods=["POST"])
 def registerUser():
-    fields = ["user", "password"]
-    if not all(name in fields for name in request.form):
+    if "user" not in request.form or "password" not in request.form:
         return ErrorRegister("There are no required fields ('user', 'password')").__dict__
 
     checkUser = User.query.filter_by(username=request.form["user"]).first()
