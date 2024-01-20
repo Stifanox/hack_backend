@@ -50,3 +50,7 @@ def registerUser():
     db.session.commit()
 
     return SuccessLogin({"user": newUser.username, "id": newUser.id}).__dict__, 200
+
+@bp.route("/getUserStreak/<int:userId>", methods=["GET"])
+def getUserStreak(userId):
+    userToGetStreak = User.query.filter_by(id=userId).first()

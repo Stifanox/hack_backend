@@ -42,6 +42,10 @@ def create_cheerup():
     daily_update = DailyUpdate.query.get(new_cheerup.update_id)
     daily_update.is_cheered = True
 
+    print(data["senderId"])
+    userWhoCheered = User.query.filter_by(id=int(data["senderId"])).first()
+    userWhoCheered.general_streak = userWhoCheered.general_streak + 1
+
     db.session.add(new_cheerup)
     db.session.commit()
     return success(new_cheerup.toDict()), 201

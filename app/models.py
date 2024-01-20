@@ -9,7 +9,7 @@ class User(db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password = db.Column(db.String(120))
-
+    general_streak = db.Column(db.Integer, default = 0)
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -18,7 +18,8 @@ class User(db.Model):
             "username": self.username,
             "password": self.password,
             "email": self.email,
-            "id": self.id
+            "id": self.id,
+            "generalStreak":self.general_streak
         }
 
     def fromDict(self, data, new_user=False):
