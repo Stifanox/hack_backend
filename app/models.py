@@ -24,3 +24,29 @@ class User(db.Model):
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
             self.set_password(data['password'])
+
+
+class AnonimMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return f'<AnonimMessage {self.id}>'
+
+    def toDict(self):
+        return {
+            "id": self.id,
+            "senderId": self.sender_id,
+            "receiverId": self.receiver_id,
+            "message": self.message
+        }
+
+    def fromDict(self, data):
+        if 'senderId' in data:
+            self.sender_id = data['senderId']
+        if 'receiverId' in data:
+            self.receiver_id = data['receiverId']
+        if 'message' in data:
+            self.message = data['message']
