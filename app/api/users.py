@@ -65,5 +65,5 @@ def getUserStreak(userId):
 
 @bp.route("/getUserStreak/", methods=["GET"])
 @bp.route("/getUserStreak", methods=["GET"])
-def getUserStreakError(userId):
+def getUserStreakError():
     return ErrorUserStreak("Id was not passed into params").__dict__, 404

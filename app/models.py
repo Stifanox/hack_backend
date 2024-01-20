@@ -37,7 +37,7 @@ class DailyUpdate(db.Model):
     note = db.Column(db.Text)
     is_cheered = db.Column(db.Boolean, default=False)
     timestamp_new = db.Column(db.BigInteger, index=True, default=round(time.time() * 1000))
-
+    suspicious_message = db.Column(db.Boolean, default=False)
     def __repr__(self):
         return f'<DailyUpdate {self.id}>'
 
@@ -48,7 +48,8 @@ class DailyUpdate(db.Model):
             "rating": self.rating,
             "note": self.note,
             "isCheered": self.is_cheered,
-            "timestamp": self.timestamp_new
+            "timestamp": self.timestamp_new,
+            "suspiciousMessage":self.suspicious_message
         }
 
     def fromDict(self, data):

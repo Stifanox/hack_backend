@@ -3,7 +3,9 @@ from app.models import DailyUpdate, User
 from flask import jsonify, request
 from app import db
 import random
-
+import requests
+from app.gpt_request_wrapper.GPTMessage import GPTMessage
+import ast
 
 @bp.route("/daily-updates", methods=["POST"])
 def create_daily_update():
@@ -12,6 +14,20 @@ def create_daily_update():
         return {"error": "No data provided"}, 400
 
     new_update = DailyUpdate()
+
+    GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
+                             headers={"Authorization": "Bearer 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",
+                                      "Content-Type": "application/json"},
+                             data=GPTMessage(data["note"]).getMessageForDailyUpdated()
+                             )
+
+    isSus = ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("isSuspicious")
+
+    if isSus == 1:
+        new_update.suspicious_message = True
+    else:
+        new_update.suspicious_message = False
+
     new_update.fromDict(data)
     db.session.add(new_update)
     db.session.commit()
