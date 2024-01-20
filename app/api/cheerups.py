@@ -1,13 +1,36 @@
+import ast
+
 from app.api import bp
 from flask import jsonify, request
 from app import db
-from app.models import Cheerup, DailyUpdate
+from app.models import Cheerup, DailyUpdate, BadMessage, User
 import requests
 from app.gpt_request_wrapper.GPTMessage import GPTMessage
+from app.common.response import success, failed
+
 
 @bp.route("/cheerups", methods=["POST"])
 def create_cheerup():
     data = request.json
+
+    print(data["content"])
+    GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
+                              headers={"Authorization": "Bearer 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",
+                                       "Content-Type": "application/json"},
+                              data=GPTMessage(data["content"]).getMessage()
+                              )
+    print(GPTAnswer.json())
+    print(GPTAnswer.json()["choices"][0]["message"]["content"])
+
+    if ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("value") == 1:
+        new_bad_message = BadMessage(user_id=data["senderId"], message=data["content"])
+        db.session.add(new_bad_message)
+        db.session.commit()
+        if BadMessage.query.filter_by(user_id=data['senderId']).count() >= 3:
+            User.query.filter_by(id=data['senderId']).first().banned = 1
+            db.session.commit()
+            return failed(f"Nie można wysłać wiadomości o treści: {data['content']}. Wysyłanie cheersów zostaje zablokowane."), 418
+        return failed(f"Nie można wysłać wiadomości o treści: {data['content']}"), 418
 
     daily_update = DailyUpdate.query.get(data.get("updateId"))
     if daily_update.is_cheered:
@@ -16,20 +39,12 @@ def create_cheerup():
     new_cheerup = Cheerup()
     new_cheerup.fromDict(data)
 
-    GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
-                              headers={"Authorization":"Bearer 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",
-                                       "Content-Type":"application/json"},
-                              data= GPTMessage(data["content"]).getMessage()
-                              )
-    print(GPTAnswer.json())
-    print(GPTAnswer.json()["choices"][0]["message"]["content"])
-
     daily_update = DailyUpdate.query.get(new_cheerup.update_id)
     daily_update.is_cheered = True
 
     db.session.add(new_cheerup)
     db.session.commit()
-    return jsonify(new_cheerup.toDict()), 201
+    return success(new_cheerup.toDict()), 201
 
 
 @bp.route("/cheerups/update/<int:update_id>", methods=["GET"])

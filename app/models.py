@@ -35,7 +35,7 @@ class DailyUpdate(db.Model):
     rating = db.Column(db.Integer)
     note = db.Column(db.Text)
     is_cheered = db.Column(db.Boolean, default=False)
-    timestamp_new = db.Column(db.BigInteger, index=True, default=round(time.time()*1000))
+    timestamp_new = db.Column(db.BigInteger, index=True, default=round(time.time() * 1000))
 
     def __repr__(self):
         return f'<DailyUpdate {self.id}>'
@@ -67,7 +67,7 @@ class Cheerup(db.Model):
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     content = db.Column(db.Text)
-    timestamp_new = db.Column(db.BigInteger, index=True, default=round(time.time()*1000))
+    timestamp_new = db.Column(db.BigInteger, index=True, default=round(time.time() * 1000))
 
     def __repr__(self):
         return f'<Cheerup {self.id}>'
@@ -97,7 +97,7 @@ class Habits(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     habit_id = db.Column(db.Integer)
-    timestamp_new = db.Column(db.BigInteger, default=round(time.time()*1000))
+    timestamp_new = db.Column(db.BigInteger, default=round(time.time() * 1000))
     timestamp_broken_new = db.Column(db.BigInteger)
     broken = db.Column(BOOLEAN, default=False)
 
@@ -109,4 +109,17 @@ class Habits(db.Model):
             "timestamp": self.timestamp_new,
             "broken": self.broken,
             "timestampBroken": self.timestamp_broken_new
+        }
+
+
+class BadMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+
+    def toDict(self):
+        return {
+            'id': self.id,
+            'userId': self.user_id,
+            'message': self.message
         }

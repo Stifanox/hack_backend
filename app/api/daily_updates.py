@@ -29,5 +29,7 @@ def get_random_uncheered():
     uncheered_updates = DailyUpdate.query.filter_by(is_cheered=False).all()
     if not uncheered_updates:
         return {"message": "No uncheered updates available"}, 404
+    if not uncheered_updates:
+        return {"message": "You are banned from sending daily updates"}, 503
     random_update = random.choice(uncheered_updates)
     return jsonify(random_update.toDict())

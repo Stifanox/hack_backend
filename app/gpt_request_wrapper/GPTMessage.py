@@ -7,7 +7,7 @@ class GPTMessage:
         self.messageToCheck = messageToCheck
 
     def getMessage(self):
-        json.dumps({
+        return json.dumps({
             "model": "gpt-3.5-turbo",
             "messages": [{
                 "role": "system",
