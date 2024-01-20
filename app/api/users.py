@@ -1,3 +1,5 @@
+import sqlalchemy.sql.functions
+
 from app.api import bp
 from app.models import User
 from flask import jsonify
@@ -13,6 +15,9 @@ def getUser(id):
 
 @bp.route("/login", methods=["POST"])
 def loginUser():
+    if request.content_type != "application/json":
+        return ErrorLogin("Content type is not application/json").__dict__
+
     if "user" not in request.json or "password" not in request.json:
         return ErrorLogin("There are no required fields ('user', 'password')").__dict__
 
@@ -22,13 +27,16 @@ def loginUser():
         return ErrorLogin("Invalid username or password").__dict__
 
     if user.password == request.json["password"]:
-        return SuccessLogin({"user": request.json["user"]}).__dict__
+        return SuccessLogin({"user": request.json["user"], "id": user.id}).__dict__
     else:
         return ErrorLogin("Invalid username or password").__dict__
 
 
 @bp.route("/register", methods=["POST"])
 def registerUser():
+    if request.content_type != "application/json":
+        return ErrorRegister("Content type is not application/json").__dict__
+
     if "user" not in request.json or "password" not in request.json:
         return ErrorRegister("There are no required fields ('user', 'password')").__dict__
 

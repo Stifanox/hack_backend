@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from sqlalchemy import BOOLEAN
 from app import db
 
 
@@ -42,22 +42,17 @@ class DailyUpdate(db.Model):
     def toDict(self):
         return {
             "id": self.id,
-            "userId": self.user_id,
+            "user_id": self.user_id,
             "rating": self.rating,
             "note": self.note,
-            "isCheered": self.is_cheered,
+            "is_cheered": self.is_cheered,
             "timestamp": self.timestamp.isoformat()
         }
 
     def fromDict(self, data):
-        if 'userId' in data:
-            self.user_id = data['userId']
-        if 'rating' in data:
-            self.rating = data['rating']
-        if 'note' in data:
-            self.note = data['note']
-        if 'isCheered' in data:
-            self.is_cheered = data['isCheered']
+        for field in ['user_id', 'rating', 'note', 'is_cheered']:
+            if field in data:
+                setattr(self, field, data[field])
 
 
 class Cheerup(db.Model):
@@ -85,3 +80,11 @@ class Cheerup(db.Model):
         for field in ['update_id', 'receiver_id', 'sender_id', 'content']:
             if field in data:
                 setattr(self, field, data[field])
+
+
+class Habits(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    habit_id = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+    broken = db.Column(BOOLEAN,default = False)
