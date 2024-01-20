@@ -4,7 +4,8 @@ from app.api import bp
 from app.models import User
 from flask import jsonify
 from flask import request
-from app.common.response import SuccessLogin, ErrorLogin, ErrorRegister, SuccessRegister
+from app.common.response import SuccessLogin, ErrorLogin, ErrorRegister, SuccessRegister, SuccessUserStreak, \
+    ErrorUserStreak
 from app import db
 
 
@@ -49,8 +50,20 @@ def registerUser():
     db.session.add(newUser)
     db.session.commit()
 
-    return SuccessLogin({"user": newUser.username, "id": newUser.id}).__dict__, 200
+    return SuccessRegister({"user": newUser.username, "id": newUser.id}).__dict__, 200
+
 
 @bp.route("/getUserStreak/<int:userId>", methods=["GET"])
 def getUserStreak(userId):
     userToGetStreak = User.query.filter_by(id=userId).first()
+
+    if not userToGetStreak:
+        return ErrorUserStreak("User was not found by the given id").__dict__, 404
+
+    return SuccessUserStreak(userToGetStreak.general_streak).__dict__
+
+
+@bp.route("/getUserStreak/", methods=["GET"])
+@bp.route("/getUserStreak", methods=["GET"])
+def getUserStreak(userId):
+    return ErrorUserStreak("Id was not passed into params").__dict__, 404
