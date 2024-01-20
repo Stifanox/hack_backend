@@ -1,9 +1,10 @@
 import dataclasses
+from typing import Any
 
 
 @dataclasses.dataclass
 class SuccessLogin:
-    data: str
+    data: Any
     loggedIn: str = True
 
 
@@ -12,6 +13,15 @@ class ErrorLogin:
     data: str
     loggedIn: str = False
 
+@dataclasses.dataclass
+class ErrorRegister:
+    data: str
+    registered: str = False
+
+@dataclasses.dataclass
+class SuccessRegister:
+    data: str
+    registered: str = True
 
 def success(data):
     return {
