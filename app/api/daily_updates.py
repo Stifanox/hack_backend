@@ -53,13 +53,13 @@ def get_daily_updates(user_id):
 @bp.route("/daily-updates/matcher/<int:userId>", methods=["GET"])
 def get_random_uncheered(userId):
     uncheered_updates = DailyUpdate.query.filter_by(is_cheered=False).filter(
-        DailyUpdate.rating < 3, DailyUpdate.user_id != 1).all()
+        DailyUpdate.rating < 3, DailyUpdate.user_id != userId).all()
     if not uncheered_updates:
         return {"message": "No uncheered updates available"}, 404
     random_update = random.choice(uncheered_updates)
 
     try:
-        user_updates = DailyUpdate.query.filter_by(user_id=userId).filter(DailyUpdate.rating < 3).all()
+        user_updates = DailyUpdate.query.filter_by(user_id=userId).all()
 
         GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
                                   headers={
@@ -75,6 +75,9 @@ def get_random_uncheered(userId):
                                   )
 
         id = ast.literal_eval(GPTAnswer.json()["choices"][0]["message"]["content"]).get("id")
+        if DailyUpdate.query.filter_by(id=id).first().user_id == userId:
+            return random_update
+
         return jsonify(DailyUpdate.query.filter_by(id=id).first().toDict())
     except:
         return jsonify(random_update.toDict())
