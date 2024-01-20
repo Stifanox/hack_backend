@@ -3,7 +3,7 @@ from app.models import Habits
 from flask import request
 from app.common.response import SuccessHabit, ErrorHabit
 from app import db
-
+from datetime import datetime
 
 @bp.route("/habits", methods=["POST"])
 def createNewHabit():
@@ -33,6 +33,9 @@ def updateHabit():
 
     if not habit:
         return ErrorHabit("Habit was not found").__dict__, 404
+
+    if request.json["broken"]:
+        habit.timestamp_broken = datetime.utcnow()
 
     habit.broken = request.json["broken"]
     db.session.commit()

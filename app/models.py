@@ -97,6 +97,7 @@ class Habits(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     habit_id = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+    timestamp_broken = db.Column(db.DateTime)
     broken = db.Column(BOOLEAN, default=False)
 
     def toDict(self):
@@ -105,5 +106,6 @@ class Habits(db.Model):
             "userId": self.user_id,
             "habitId": self.habit_id,
             "timestamp": self.timestamp,
-            "broken": self.broken
+            "broken": self.broken,
+            "timestampBroken": self.timestamp_broken
         }
