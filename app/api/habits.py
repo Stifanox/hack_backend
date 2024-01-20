@@ -37,6 +37,7 @@ def updateHabit():
     if request.json["broken"]:
         habit.timestamp_broken_new = round(time.time()*1000)
 
+    habit.updateTimestamp()
     habit.broken = request.json["broken"]
     db.session.commit()
     return SuccessHabit("Habit was successfully updated").__dict__, 200
