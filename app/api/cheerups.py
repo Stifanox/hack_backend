@@ -7,13 +7,13 @@ from app.models import Cheerup, DailyUpdate, BadMessage, User
 import requests
 from app.gpt_request_wrapper.GPTMessage import GPTMessage
 from app.common.response import success, failed
-
+from app.api.gpt_api_key import GPT_API_KEY
 
 @bp.route("/cheerups", methods=["POST"])
 def create_cheerup():
     data = request.json
     GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
-                              headers={"Authorization": "Bearer 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",
+                              headers={"Authorization": f"Bearer {GPT_API_KEY}",
                                        "Content-Type": "application/json"},
                               data=GPTMessage(data["content"]).getCheerMessage()
                               )
@@ -57,5 +57,5 @@ def get_cheerup_by_update(update_id):
 
 @bp.route("/cheerups/user/<int:user_id>", methods=["GET"])
 def get_cheerups_by_user(user_id):
-    cheerups = Cheerup.query.filter_by(receiver_id=user_id).all()
+    cheerups = Cheerup.query.filter_by(receiver_id=user_id).order_by(Cheerup.id.desc()).all()
     return jsonify([cheerup.toDict() for cheerup in cheerups])

@@ -12,6 +12,7 @@ import random
 import requests
 from app.gpt_request_wrapper.GPTMessage import GPTMessage
 import ast
+from app.api.gpt_api_key import GPT_API_KEY
 
 
 @bp.route('/therapist', methods=['POST'])
@@ -47,7 +48,7 @@ def get_filtered_therapists(userId):
     try:
         GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
                                   headers={
-                                      "Authorization": "Bearer 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",
+                                      "Authorization": f"Bearer {GPT_API_KEY}",
                                       "Content-Type": "application/json"},
                                   data=GPTMessage(all_messages).getRecommendedTherapistList(therapists)
                                   )

@@ -3,7 +3,6 @@ import ast
 import requests
 
 from app.api import bp
-from app.gpt_request_wrapper.GPTMessage import GPTMessage
 from app.models import DailyUpdate, User
 from flask import jsonify, request
 from app import db
@@ -11,7 +10,7 @@ import random
 import requests
 from app.gpt_request_wrapper.GPTMessage import GPTMessage
 import ast
-
+from app.api.gpt_api_key import GPT_API_KEY
 
 @bp.route("/daily-updates", methods=["POST"])
 def create_daily_update():
@@ -22,7 +21,7 @@ def create_daily_update():
     new_update = DailyUpdate()
 
     GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
-                              headers={"Authorization": "Bearer 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",
+                              headers={"Authorization": f"Bearer {GPT_API_KEY}",
                                        "Content-Type": "application/json"},
                               data=GPTMessage(data["note"]).getMessageForDailyUpdated()
                               )
@@ -63,7 +62,7 @@ def get_random_uncheered(userId):
 
         GPTAnswer = requests.post(url="https://api.openai.com/v1/chat/completions",
                                   headers={
-                                      "Authorization": "Bearer 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",
+                                      "Authorization": f"Bearer {GPT_API_KEY}",
                                       "Content-Type": "application/json"},
                                   data=GPTMessage(
                                       ", ".join(
@@ -81,3 +80,4 @@ def get_random_uncheered(userId):
         return jsonify(DailyUpdate.query.filter_by(id=id).first().toDict())
     except:
         return jsonify(random_update.toDict())
+

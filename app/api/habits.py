@@ -16,6 +16,8 @@ def createNewHabit():
 
     newHabit = Habits(user_id=request.json["userId"], habit_id=request.json["habitId"])
 
+    Habits.timestamp_new = int(time.time()*1000)
+    print(int(time.time()*1000))
     db.session.add(newHabit)
     db.session.commit()
 
@@ -36,7 +38,7 @@ def updateHabit():
         return ErrorHabit("Habit was not found").__dict__, 404
 
     if request.json["broken"]:
-        habit.timestamp_broken_new = round(time.time() * 1000)
+        habit.timestamp_broken_new = int(time.time() * 1000)
 
     habit.updateTimestamp()
     habit.broken = request.json["broken"]
