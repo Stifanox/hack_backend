@@ -53,7 +53,7 @@ def get_daily_updates(user_id):
 @bp.route("/daily-updates/matcher/<int:userId>", methods=["GET"])
 def get_random_uncheered(userId):
     uncheered_updates = DailyUpdate.query.filter_by(is_cheered=False).filter(
-        DailyUpdate.rating < 3, DailyUpdate.user_id != userId).all()
+        DailyUpdate.rating < 3, DailyUpdate.user_id != userId).order_by(DailyUpdate.timestamp_new.desc()).all()
     if not uncheered_updates:
         return {"message": "No uncheered updates available"}, 404
     random_update = random.choice(uncheered_updates)
