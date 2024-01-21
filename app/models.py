@@ -39,6 +39,7 @@ class DailyUpdate(db.Model):
     is_cheered = db.Column(db.Boolean, default=False)
     timestamp_new = db.Column(db.BigInteger, index=True, default=round(time.time() * 1000))
     suspicious_message = db.Column(db.Boolean, default=False)
+
     def __repr__(self):
         return f'<DailyUpdate {self.id}>'
 
@@ -56,7 +57,7 @@ class DailyUpdate(db.Model):
             "note": self.note,
             "isCheered": self.is_cheered,
             "timestamp": self.timestamp_new,
-            "suspiciousMessage":self.suspicious_message
+            "suspiciousMessage": self.suspicious_message
         }
 
     def fromDict(self, data):
@@ -137,3 +138,32 @@ class BadMessage(db.Model):
             'userId': self.user_id,
             'message': self.message
         }
+
+
+class Therapist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    phone = db.Column(db.String(15), unique=True, nullable=False)
+    page = db.Column(db.String(100))
+    is_accepted = db.Column(db.Boolean, default=True, name='is_accepted')
+    description = db.Column(db.Text)
+
+    def toDict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'phone': self.phone,
+            'page': self.page,
+            'isAccepted': self.is_accepted,
+            'description': self.description
+        }
+
+    def fromDict(self, data):
+        for field in ['name', 'email', 'phone', 'page', 'isAccepted', 'description']:
+            if field in data:
+                if field == 'isAccepted':
+                    setattr(self, 'is_accepted', data[field])
+                else:
+                    setattr(self, field, data[field])
